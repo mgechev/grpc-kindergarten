@@ -11,7 +11,8 @@
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.9.6",
     "grpc": "^1.21.1",
-    "grpc-web": "^1.0.4"
+    "grpc-web": "^1.0.4",
+    "msgpack-lite": "^0.1.26"
   },
   "devDependencies": {
     "rollup-plugin-commonjs": "^10.0.1",

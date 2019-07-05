@@ -30,12 +30,12 @@ const { readFileSync } = require('fs');
 // //   'x-request-id': '97216f9d-133b-4214-aa52-8a0933a47ed4',
 // //   'x-envoy-expected-rq-timeout-ms': '15000' }
 
-const options = {
-  key: readFileSync('server_key.pem'),
-  cert: readFileSync('server_cert.pem')
-};
+// const options = {
+//   key: readFileSync('server_key.pem'),
+//   cert: readFileSync('server_cert.pem')
+// };
 
-const server = http2.createServer(options);
+const server = http2.createServer();
 // const server = http2.createSecureServer(options);
 
 server.on('stream', (stream, headers) => {

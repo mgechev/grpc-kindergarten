@@ -1,12 +1,13 @@
 const grpc = require('grpc');
-const { readFileSync } = require('fs');
 
 const serializeJson = obj => {
   return new Buffer(JSON.stringify(obj));
 };
 const deserializeJson = buffer => {
-  console.log('##', buffer);
-  return buffer;
+  if (buffer === undefined || buffer === null) {
+    return buffer;
+  }
+  return JSON.parse(buffer.toString());
 };
 
 const service = {
@@ -24,10 +25,9 @@ const service = {
 
 const server = new grpc.Server();
 server.addService(service, {
-  add(call) {
-    console.log('################### HERE ###################');
-    call.write(42);
-    call.end();
+  add(call, cb) {
+    console.log(call.request);
+    cb(null, call.request);
   }
 });
 

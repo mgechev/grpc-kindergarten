@@ -10,6 +10,7 @@ static_resources:
         config:
           codec_type: auto
           stat_prefix: ingress_http
+          stream_idle_timeout: 0s
           access_log:
             name: envoy.file_access_log
             config:
@@ -39,12 +40,20 @@ static_resources:
           - name: envoy.grpc_web
           - name: envoy.cors
           - name: envoy.router
+
   clusters:
   - name: local_service_grpc
     connect_timeout: 3s
-    type: STRICT_DNS
+    type: logical_dns
+    common_http_protocol_options:
+      idle_timeout: 7200s
     lb_policy: round_robin
     http2_protocol_options: {}
+    upstream_connection_options:
+      tcp_keepalive:
+        keepalive_probes: 1
+        keepalive_time: 10
+        keepalive_interval: 10
     load_assignment:
       cluster_name: local_service_grpc
       endpoints:
