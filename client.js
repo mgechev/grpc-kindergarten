@@ -9,11 +9,12 @@ export function grpcJSONRequest(
   const service = [packageName, serviceName].filter(Boolean).join('.');
   return fetch(`${host}/${service}/${methodName}`, {
     method: 'POST',
+    mode: 'cors',
     headers: Object.assign(
       {},
       {
-        'content-type': 'application/grpc-web+json',
-        'x-grpc-web': '1'
+        'content-type': 'application/grpc-web',
+        te: 'trailers'
       },
       requestHeaders
     ),
@@ -27,7 +28,7 @@ export function grpcJSONRequest(
     .catch(console.error);
 }
 
-grpcJSONRequest('http://127.0.0.1:9090', '', 'Calculator', 'Add', {}, 42);
+grpcJSONRequest('http://127.0.0.1:9211', '', 'calculator', 'add', {}, 42);
 
 // const grpc = require('grpc');
 // const serializeJson = obj => new Buffer(JSON.stringify(obj));

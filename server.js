@@ -1,11 +1,18 @@
 const grpc = require('grpc');
+const { readFileSync } = require('fs');
 
-const serializeJson = obj => new Buffer(JSON.stringify(obj));
-const deserializeJson = buffer => JSON.parse(buffer.toString());
+const serializeJson = obj => {
+  return new Buffer(JSON.stringify(obj));
+};
+const deserializeJson = buffer => {
+  console.log('##', buffer);
+  return buffer;
+};
 
 const service = {
   add: {
-    path: '/Calculator/Add',
+    originalName: 'add',
+    path: '/calculator/add',
     requestStream: false,
     responseStream: false,
     requestSerialize: serializeJson,
@@ -23,6 +30,16 @@ server.addService(service, {
     call.end();
   }
 });
+
+// server.bind(
+//   '127.0.0.1:8081',
+//   grpc.ServerCredentials.createSsl(readFileSync('./CA_cert.pem'), [
+//     {
+//       private_key: readFileSync('./server_key.pem'),
+//       cert_chain: readFileSync('./server_cert.pem')
+//     }
+//   ])
+// );
 
 server.bind('0.0.0.0:8081', grpc.ServerCredentials.createInsecure());
 server.start();
