@@ -1,27 +1,25 @@
 const getBody = str => {
   const encoder = new TextEncoder();
   const bin = encoder.encode(JSON.stringify(str));
-  const n = bin.length.toString(2).padStart(32, '0');
-  return new Blob([
-    new Uint8Array([
-      0,
-      parseInt(n.slice(0, 8), 2),
-      parseInt(n.slice(8, 16), 2),
-      parseInt(n.slice(16, 24), 2),
-      parseInt(n.slice(24, 32), 2),
-      ...bin
-    ])
-  ]);
+  const res = [];
+  const twoOnEight = Math.pow(2, 8) - 1;
+  const len = bin.length;
+  if (len >= Math.pow(2, 32)) {
+    throw new Error('Cannot accept message longer than 2^32 - 1');
+  }
+  for (let i = 0; i < 4; i += 1) {
+    res.unshift(((twoOnEight << (i * 8)) & len) >> (i * 8));
+  }
+  return new Blob([new Uint8Array([0, ...res, ...bin])]);
 };
 
-export function grpcJSONRequest(host, serviceName, methodName, requestObject) {
-  const service = [serviceName].filter(Boolean).join('.');
+export function grpcJSONRequest(host, namespace, serviceName, methodName, requestObject) {
   const body = getBody(requestObject);
-  return fetch(`${host}/${service}/${methodName}`, {
+  return fetch(`${host}/${namespace}.${serviceName}/${methodName}`, {
     method: 'POST',
     mode: 'cors',
     headers: {
-      'content-type': 'application/grprc+json'
+      'content-type': 'application/grprc'
     },
     body
   })
@@ -33,9 +31,9 @@ export function grpcJSONRequest(host, serviceName, methodName, requestObject) {
     .catch(console.error);
 }
 
-grpcJSONRequest('http://127.0.0.1:9211', 'calculator', 'add', { message: 'My message' });
-grpcJSONRequest('http://127.0.0.1:9211', 'calculator', 'add', { message: 'Минко' });
-grpcJSONRequest('http://127.0.0.1:9211', 'calculator', 'add', { message: '😬' });
+grpcJSONRequest('http://127.0.0.1:9211', 'demo', 'calculator', 'add', { message: 'My message' });
+grpcJSONRequest('http://127.0.0.1:9211', 'demo', 'calculator', 'add', { message: 'Минко' });
+grpcJSONRequest('http://127.0.0.1:9211', 'demo', 'calculator', 'add', { message: '😬' });
 
 // const grpc = require('grpc');
 // const serializeJson = obj => new Buffer(JSON.stringify(obj));
