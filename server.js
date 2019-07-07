@@ -13,7 +13,7 @@ const deserializeJson = buffer => {
 const service = {
   add: {
     originalName: 'add',
-    path: '/demo.calculator/add',
+    path: '/calculator/add',
     requestStream: false,
     responseStream: false,
     requestSerialize: serializeJson,

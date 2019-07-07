@@ -16,9 +16,9 @@ var grpc = (function (exports) {
     return new Blob([new Uint8Array([0, ...res, ...bin])]);
   };
 
-  function grpcJSONRequest(host, namespace, serviceName, methodName, requestObject) {
+  function grpcUnary(fetch, host, serviceName, methodName, requestObject) {
     const body = getBody(requestObject);
-    return fetch(`${host}/${namespace}.${serviceName}/${methodName}`, {
+    return fetch(`${host}/${serviceName}/${methodName}`, {
       method: 'POST',
       mode: 'cors',
       headers: {
@@ -34,9 +34,11 @@ var grpc = (function (exports) {
       .catch(console.error);
   }
 
-  grpcJSONRequest('http://127.0.0.1:9211', 'demo', 'calculator', 'add', { message: 'My message' });
-  grpcJSONRequest('http://127.0.0.1:9211', 'demo', 'calculator', 'add', { message: 'Минко' });
-  grpcJSONRequest('http://127.0.0.1:9211', 'demo', 'calculator', 'add', { message: '😬' });
+  grpcUnary(fetch, 'http://127.0.0.1:9211', 'calculator', 'add', {
+    message: 'My message'
+  });
+  grpcUnary(fetch, 'http://127.0.0.1:9211', 'calculator', 'add', { message: 'Минко' });
+  grpcUnary(fetch, 'http://127.0.0.1:9211', 'calculator', 'add', { message: '😬' });
 
   // const grpc = require('grpc');
   // const serializeJson = obj => new Buffer(JSON.stringify(obj));
@@ -57,7 +59,7 @@ var grpc = (function (exports) {
   // const client = grpc.makeGenericClientConstructor(service, 'Calculator', {});
   // console.log(client());
 
-  exports.grpcJSONRequest = grpcJSONRequest;
+  exports.grpcUnary = grpcUnary;
 
   return exports;
 
